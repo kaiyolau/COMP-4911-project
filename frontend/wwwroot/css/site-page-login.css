@@ -119,3 +119,17 @@
   font-weight: 500;
   line-height: 1.4;
 }
+
+/* Demo login hint (shown only when ShowDemoLoginHint=true) */
+.login-demo-hint {
+    margin-top: 1.5rem;
+    padding: 0.9rem 1rem;
+    border: 1px dashed rgba(60, 90, 60, 0.45);
+    border-radius: 12px;
+    background: rgba(240, 247, 233, 0.8);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+.login-demo-hint p { margin: 0 0 0.25rem; }
+.login-demo-hint-title { font-weight: 700; margin-bottom: 0.35rem !important; }
+.login-demo-hint-more { font-size: 0.82rem; opacity: 0.85; }
