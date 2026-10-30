@@ -44,6 +44,7 @@ services:
     environment:
       PORT: "8080"
       ApiBaseUrl: ${PUBLIC_URL}
+      ShowDemoLoginHint: ${SHOW_DEMO_LOGIN_HINT:-true}
     depends_on:
       - backend
 
