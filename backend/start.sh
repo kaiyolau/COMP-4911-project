@@ -1,6 +1,6 @@
 #!/bin/sh
 # Render supplies $PORT; keep the heap small for the free instance (512MB RAM).
-export JAVA_OPTS="${JAVA_OPTS:--Xms64m -Xmx300m -XX:MaxMetaspaceSize=128m -Djava.net.preferIPv4Stack=true}"
+export JAVA_OPTS="${JAVA_OPTS:--Xms64m -Xmx192m -XX:MaxMetaspaceSize=192m -XX:+UseSerialGC -Xss512k -XX:ReservedCodeCacheSize=48m -Djava.net.preferIPv4Stack=true}"
 
 export MYSQL_PWD="$MYSQL_PASSWORD"
 DB_CLIENT="mariadb --ssl -h $MYSQL_HOST -P $MYSQL_PORT -u $MYSQL_USER"
@@ -21,14 +21,14 @@ fi
 # Point the WildFly datasource at the runtime env vars, over TLS.
 URL="jdbc:mysql://$MYSQL_HOST:$MYSQL_PORT/$MYSQL_DATABASE?sslMode=REQUIRED"
 cat > /tmp/ds.cli <<CLI
-embed-server --server-config=standalone.xml --std-out=echo
+embed-server --server-config=standalone.xml --std-out=discard
 /subsystem=datasources/data-source=MySQLDS:write-attribute(name=connection-url,value="$URL")
 /subsystem=datasources/data-source=MySQLDS:write-attribute(name=user-name,value="\${env.MYSQL_USER}")
 /subsystem=datasources/data-source=MySQLDS:write-attribute(name=password,value="\${env.MYSQL_PASSWORD}")
 /subsystem=datasources/data-source=MySQLDS:read-resource
 stop-embedded-server
 CLI
-"$JBOSS_HOME/bin/jboss-cli.sh" --file=/tmp/ds.cli 2>&1 | sed -E 's/("password" => ")[^"]*/\1***/' | grep -v -i "^\s*$" | head -60
+"$JBOSS_HOME/bin/jboss-cli.sh" --file=/tmp/ds.cli 2>&1 | sed -E 's/("password" => ")[^"]*/\1***/' | grep -E "connection-url|user-name|\"password\"|outcome|ERROR|Failed"
 rm -f /tmp/ds.cli
 
 exec "$JBOSS_HOME/bin/standalone.sh" -b 0.0.0.0 -Djboss.http.port="${PORT:-8080}"
