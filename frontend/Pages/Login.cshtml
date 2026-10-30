@@ -1,4 +1,5 @@
 @page
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @model frontend.Pages.LoginModel
 @{
     ViewData["Title"] = "Login";
@@ -36,6 +37,17 @@
                     Log in
                 </button>
             </form>
+            @if (Configuration["ShowDemoLoginHint"] == "true")
+            {
+                <div class="login-demo-hint" role="note">
+                    <p class="login-demo-hint-title">Demo login</p>
+                    <p>Employee ID <strong>1</strong> (admin, Wile Coyote) &middot; Password <strong>password</strong></p>
+                    <p class="login-demo-hint-more">
+                        Other demo users also use the password <strong>password</strong>:
+                        ID 2 Operations Manager (Elmer Fudd), ID 3 HR (Road Runner), ID 4 Employee (Bugs Bunny).
+                    </p>
+                </div>
+            }
         </div>
     </div>
 </div>
