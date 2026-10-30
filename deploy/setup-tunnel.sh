@@ -23,5 +23,8 @@ ingress:
     service: http://gateway:80
   - service: http_status:404
 CFG
-chmod 644 "$DIR/config.yml" "$DIR/$TUNNEL_ID.json"
+# The credentials file is root-owned (written inside the container), so chmod it there too;
+# the tunnel service runs cloudflared as a non-root user and must be able to read it.
+chmod 644 "$DIR/config.yml"
+docker run --rm -u 0 -v "$DIR:/root/.cloudflared" --entrypoint chmod "$IMAGE" 644 "/root/.cloudflared/$TUNNEL_ID.json"
 echo "Tunnel $TUNNEL_NAME ($TUNNEL_ID) -> https://$HOSTNAME"
